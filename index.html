@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Aspect has moved</title>
+<noscript><meta http-equiv="refresh" content="0; url=https://aspect.wine/"></noscript>
+<script>
+  // atlaslope.com after the move (owner, 1 Nov 2026): every address goes on to the same path on aspect.wine. Learn progress lives in
+  // this browser under the old address, so a visitor who has some is asked to save it to a file first (Learn loads it on aspect.wine).
+  var to = 'https://aspect.wine' + location.pathname + location.search + location.hash;
+  var rec = null, moved = false;
+  try { rec = localStorage.getItem('atlaslope.quiz'); moved = localStorage.getItem('atlaslope.moved') === '1'; } catch (e) { /* no storage: nothing to save */ }
+  if (!rec || moved) location.replace(to);
+</script>
+<style>
+  /* Values copied from the design tokens (src/design/tokens.css); this page lives in its own repo and loads nothing. */
+  body { margin: 0; background: #F5F0E6; color: #141210; font: 16px/1.5 "IBM Plex Sans", system-ui, sans-serif; }
+  main { max-width: 34rem; margin: 0 auto; padding: 4rem 1rem; }
+  h1 { font: 400 2.25rem/1.15 "Newsreader", Georgia, serif; margin: 0 0 1.5rem; }
+  p { margin: 0 0 0.75rem; }
+  .go { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 2rem; }
+  button { font: 600 1rem/1 "IBM Plex Sans", system-ui, sans-serif; min-height: 44px; padding: 0 1.25rem; border: 0; border-radius: 6px; background: #141210; color: #F5F0E6; cursor: pointer; }
+  a { color: inherit; text-underline-offset: 4px; }
+  :focus-visible { outline: 2px solid #141210; outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Aspect has moved to aspect.wine.</h1>
+  <p>Your Learn progress is kept in this browser, at the old address.</p>
+  <p>Save it to a file here.</p>
+  <p>Then load it in Learn on aspect.wine.</p>
+  <div class="go">
+    <button type="button" id="save">Save my progress</button>
+    <a id="on" href="https://aspect.wine/">Go to aspect.wine</a>
+  </div>
+</main>
+<script>
+  document.getElementById('on').href = to;
+  document.getElementById('save').onclick = function () {
+    // The same file Learn's "Save to a file" writes: the stored record with a fresh savedAt.
+    var at = new Date().toISOString(), text = rec;
+    try { var r = JSON.parse(rec); r.savedAt = at; text = JSON.stringify(r, null, 1); } catch (e) { /* damaged: save it as stored, Learn says what it can read */ }
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+    a.download = 'atlaslope-progress-' + at.slice(0, 10) + '.json';
+    a.click();
+    try { localStorage.setItem('atlaslope.moved', '1'); } catch (e) { /* asked again next visit */ }
+  };
+</script>
+</body>
+</html>
